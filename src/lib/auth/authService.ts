@@ -25,7 +25,7 @@ export const getUser = async (fetcher: ApiFetcher, token: string) => {
   )
 
   if (!response.ok) {
-    return null
+    throw new Error(response.data.message)
   }
 
   return response.data
@@ -37,7 +37,7 @@ export const getTokens = async (fetcher: ApiFetcher, credentials: { email: strin
   })
 
   if (!response.ok) {
-    return null
+    throw new Error(response.data.message)
   }
 
   return response.data
@@ -46,15 +46,7 @@ export const getTokens = async (fetcher: ApiFetcher, credentials: { email: strin
 export const doAppLogin = async (fetcher: ApiFetcher, credentials: { email: string; password: string }) => {
   const tokens = await getTokens(fetcher, credentials)
 
-  if (!tokens) {
-    return null
-  }
-
   const userData = await getUser(fetcher, tokens.accessToken)
-
-  if (!userData) {
-    return null
-  }
 
   return { tokens, userData }
 }

@@ -36,10 +36,6 @@ function AuthProvider(props: AuthProviderProps): JSX.Element {
   const login: Auth['login'] = async credentials => {
     const loginResponse = await doAppLogin(fetcher, credentials)
 
-    if (!loginResponse) {
-      throw new Error('Failed to login')
-    }
-
     const { tokens, userData } = loginResponse
 
     setCurrentUser({
@@ -97,10 +93,6 @@ function AuthProvider(props: AuthProviderProps): JSX.Element {
       }
 
       const userData = await getUser(fetcher, tokens.access)
-
-      if (!userData) {
-        return
-      }
 
       setCurrentUser({
         userId: userData.userId,
