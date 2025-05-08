@@ -89,9 +89,28 @@ Using this approach, now I have to get all the matches, working with the paginat
 
 ### Notes about the 3rd task
 
-Due I did some modifications in the code of Matches view for the 2nd task, I had to create the PR manually. 
+Due to I did some modifications in the code of Matches view for the 2nd task, I had to create the PR manually. 
 
 ### Notes about the 4th task
-For this, I used a timeout and an effect. Honestly, I don't like so much that solution and I prefer to check the refresh token in case of error and refresh it if it is valid. 
+For this, I used a timeout and an effect. Honestly, I am not enough satisfied with that solution and I prefer to check the refresh token in case of error and refresh it if it is valid. 
 
 I did not implement in that way because it will require to refactor a lot and I think is not the scope of this exercise.
+
+#### Token Refresh Timeout Limitation
+During testing, I encountered an issue with tokens that have expiration dates set far in the future (several years ahead). This is common in test environments but can cause problems with the refresh mechanism:
+
+- In the tests, tokens with very distant expiration dates caused the `setTimeout` for auto-refresh to be scheduled too far in the future
+- This led to potential integer overflow issues with JavaScript's timeout handling
+- More importantly, having such long timeouts is impractical and could lead to memory leaks
+
+To solve this issue, I implemented a 24-hour limit for token refresh timeouts in the `getRefreshTimeout` function:
+
+```typescript
+// Calculate the time difference in milliseconds
+const timeDiff = expiresAt.getTime() - now.getTime()
+
+// Limit to maximum 24 hours (24 * 60 * 60 * 1000 = 86400000 milliseconds)
+return Math.min(timeDiff, 86400000)
+```
+
+This ensures that even with tokens set to expire years in the future (as is common in test environments), the refresh mechanism will always schedule a check at most 24 hours ahead. This is a practical compromise that works well for both testing and production environments.
