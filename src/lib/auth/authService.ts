@@ -1,6 +1,6 @@
 import { mapTokensFromApi, mapUserFromApi } from './AuthDTO'
 import { ApiFetcher } from '../api/fetcher'
-import { Auth } from './types'
+import { Auth, AuthInitializeConfig } from './types'
 
 // En authService.ts
 export function isTokenValid(tokens: Auth['tokens'] | null): boolean {
@@ -47,6 +47,32 @@ export const getTokens = async (fetcher: ApiFetcher, credentials: { email: strin
 export const doAppLogin = async (fetcher: ApiFetcher, credentials: { email: string; password: string }) => {
   const tokens = await getTokens(fetcher, credentials)
   const userData = await getUser(fetcher, tokens.access)
+
+  return { tokens, userData }
+}
+
+export const getUserFromInitialTokens = async (
+  fetcher: ApiFetcher,
+  initialTokens: AuthInitializeConfig['initialTokens'],
+) => {
+  let tokens: Auth['tokens'] | null = null
+  let userData: Auth['currentUser'] | null = null
+
+  if (initialTokens) {
+    if (initialTokens instanceof Promise) {
+      const tokenResponse = await initialTokens
+
+      if (tokenResponse) {
+        tokens = tokenResponse
+      }
+    } else {
+      tokens = initialTokens
+    }
+
+    if (tokens && isTokenValid(tokens)) {
+      userData = await getUser(fetcher, tokens.access)
+    }
+  }
 
   return { tokens, userData }
 }
