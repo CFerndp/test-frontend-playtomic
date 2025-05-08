@@ -33,10 +33,10 @@ Thats it! You are now ready to start with the [tasks](#tasks) or spend some time
 
 The test is divided in three mandatory tasks and one optional. The whole test is designed to be resolved in around three hours (not including the optional tasks).
 
-- [ ] **1.** Technical work: filling the gaps in the auth flow. [Link](./docs/task-01.md)
-- [ ] **2.** Product feature request: download all matches. [Link](./docs/task-02.md)
-- [ ] **3.** Pull Request review: showing correct dates. [Link](./docs/task-03.md)
-- [ ] **4.** _(optional)_ Technical work: auth refresh flow. [Link](./docs/task-04.md)
+- [x] **1.** Technical work: filling the gaps in the auth flow. [Link](./docs/task-01.md)
+- [x] **2.** Product feature request: download all matches. [Link](./docs/task-02.md)
+- [x] **3.** Pull Request review: showing correct dates. [Link](./docs/task-03.md)
+- [x] **4.** _(optional)_ Technical work: auth refresh flow. [Link](./docs/task-04.md)
 
 ### Dos and don'ts
 
@@ -90,3 +90,8 @@ Using this approach, now I have to get all the matches, working with the paginat
 ### Notes about the 3rd task
 
 Due I did some modifications in the code of Matches view for the 2nd task, I had to create the PR manually. 
+
+### Notes about the 4th task
+For this, I used a timeout and an effect. Honestly, I don't like so much that solution and I prefer to check the refresh token in case of error and refresh it if it is valid. 
+
+I did not implement in that way because it will require to refactor a lot and I think is not the scope of this exercise.
