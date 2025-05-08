@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useEffect, useState } from 'react'
 import { Auth, AuthInitializeConfig } from './types'
-import { doAppLogin, getUser, getUserFromInitialTokens, isTokenValid } from './authService'
+import { doAppLogin, getUserFromInitialTokens } from './authService'
 import { useApiFetcher } from '../api'
 
 interface AuthProviderProps extends AuthInitializeConfig {
