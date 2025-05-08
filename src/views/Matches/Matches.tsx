@@ -15,6 +15,7 @@ import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 import { useApiFetcher } from '@/lib/api'
+import { useDownloadMatches } from './useDownloadMatches'
 import { Match } from '@/lib/api-types'
 
 export interface MatchesProps {
@@ -26,6 +27,9 @@ export function Matches(props: MatchesProps) {
   const [page, setPage] = useState<number>(0)
   const [size, setSize] = useState<number>(10)
   const fetcher = useApiFetcher()
+
+  const { onExportAllMatches, isLoading } = useDownloadMatches()
+
   const query = useSWR(
     { page, size },
     async ({ page, size }: { page: number; size: number }): Promise<{ matches: Match[]; total: number }> => {
@@ -51,6 +55,9 @@ export function Matches(props: MatchesProps) {
         <Stack direction="row" justifyContent="space-between">
           <Button size="small" onClick={onLogoutRequest}>
             Logout
+          </Button>
+          <Button size="small" onClick={() => void onExportAllMatches()} disabled={isLoading}>
+            Export All matches
           </Button>
         </Stack>
       </Stack>
