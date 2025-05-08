@@ -68,3 +68,22 @@ Every task has its own **Dos and Don'ts** section; but there are some things tha
 - **[react-router v5](https://v5.reactrouter.com/web/guides/quick-start)**
 - **[react](https://react.dev/reference/react)**
 - **[vite](https://vitejs.dev/guide/)**
+
+## Notes about the project solution
+
+### Notes about all the tasks implemented
+I decided, as always, to follow this approach:
+Implement the solution and then refactor the code so it is more maintainable and readable. You will be able to see this behavior in the commit history of the repository.
+
+### Notes about the 1st task
+For this task, there is not much to say: I implemented the solution using a React Context and have some issues with the logic. 
+The three possible states of the variables (undefined, null or TokenData) need it from me some time to handle them correctly.
+
+### Notes about the 2nd task
+Trying to solve this task, I found different solutions that I tried.
+
+1. Use DataGrid component from Material-ui: Seems like this component has a built-in functionality to export data to CSV, but I was not able to use it because it is not installed as a dependency and a conflict of versions happens if you try to install it. Therefore, I discard it. 
+2. Use a more old school trick: generate a CSV in an string and create a BLOB file to download it. This is the one that I decided to use. 
+
+Using this approach, now I have to get all the matches, working with the pagination system of the API. Probably, for this point, there is a better way to do it using useSWRInfinite, but after a couple of tries,  I decided to not use it and implement a simple while loop to get all the matches. This solution is faster and for the purpose of this task, it is enough.
+
