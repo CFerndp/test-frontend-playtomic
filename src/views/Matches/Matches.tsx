@@ -56,9 +56,6 @@ export function Matches(props: MatchesProps) {
           <Button size="small" onClick={onLogoutRequest}>
             Logout
           </Button>
-          <Button size="small" onClick={() => void onExportAllMatches()} disabled={isLoading}>
-            Export All matches
-          </Button>
         </Stack>
       </Stack>
       <TableContainer component={Paper}>
@@ -120,6 +117,9 @@ export function Matches(props: MatchesProps) {
           setPage(0)
         }}
       />
+      <Button size="small" onClick={() => void onExportAllMatches()} disabled={isLoading}>
+        Export All matches
+      </Button>
     </Stack>
   )
 }
