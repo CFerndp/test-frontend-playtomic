@@ -1,3 +1,4 @@
+import { mapTokensFromApi, mapUserFromApi } from './AuthDTO'
 import { ApiFetcher } from '../api/fetcher'
 import { Auth } from './types'
 
@@ -28,7 +29,7 @@ export const getUser = async (fetcher: ApiFetcher, token: string) => {
     throw new Error(response.data.message)
   }
 
-  return response.data
+  return mapUserFromApi(response.data)
 }
 
 export const getTokens = async (fetcher: ApiFetcher, credentials: { email: string; password: string }) => {
@@ -40,13 +41,12 @@ export const getTokens = async (fetcher: ApiFetcher, credentials: { email: strin
     throw new Error(response.data.message)
   }
 
-  return response.data
+  return mapTokensFromApi(response.data)
 }
 
 export const doAppLogin = async (fetcher: ApiFetcher, credentials: { email: string; password: string }) => {
   const tokens = await getTokens(fetcher, credentials)
-
-  const userData = await getUser(fetcher, tokens.accessToken)
+  const userData = await getUser(fetcher, tokens.access)
 
   return { tokens, userData }
 }

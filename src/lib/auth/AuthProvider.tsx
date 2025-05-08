@@ -34,21 +34,10 @@ function AuthProvider(props: AuthProviderProps): JSX.Element {
   const fetcher = useApiFetcher()
 
   const login: Auth['login'] = async credentials => {
-    const loginResponse = await doAppLogin(fetcher, credentials)
+    const { tokens, userData } = await doAppLogin(fetcher, credentials)
 
-    const { tokens, userData } = loginResponse
-
-    setCurrentUser({
-      userId: userData.userId,
-      name: userData.displayName,
-      email: userData.email ?? credentials.email,
-    })
-    setTokens({
-      access: tokens.accessToken,
-      accessExpiresAt: tokens.accessTokenExpiresAt,
-      refresh: tokens.refreshToken,
-      refreshExpiresAt: tokens.refreshTokenExpiresAt,
-    })
+    setCurrentUser(userData)
+    setTokens(tokens)
   }
 
   const logout: Auth['logout'] = async () => {
@@ -63,7 +52,7 @@ function AuthProvider(props: AuthProviderProps): JSX.Element {
   }
 
   useEffect(() => {
-    if (!tokens) {
+    if (tokens === undefined) {
       return
     }
 
@@ -72,33 +61,26 @@ function AuthProvider(props: AuthProviderProps): JSX.Element {
 
   useEffect(() => {
     const asyncTask = async () => {
-      if (!initialTokens) {
-        return
-      }
-
       let tokens: Auth['tokens'] | null = null
+      let userData: Auth['currentUser'] | null = null
 
-      if (initialTokens instanceof Promise) {
-        const tokenResponse = await initialTokens
+      if (initialTokens) {
+        if (initialTokens instanceof Promise) {
+          const tokenResponse = await initialTokens
 
-        if (!tokenResponse) {
-          return
+          if (tokenResponse) {
+            tokens = tokenResponse
+          }
+        } else {
+          tokens = initialTokens
         }
 
-        tokens = tokenResponse
+        if (tokens && isTokenValid(tokens)) {
+          userData = await getUser(fetcher, tokens.access)
+        }
       }
 
-      if (!tokens || !isTokenValid(tokens)) {
-        return
-      }
-
-      const userData = await getUser(fetcher, tokens.access)
-
-      setCurrentUser({
-        userId: userData.userId,
-        name: userData.displayName,
-        email: userData.email ?? '',
-      })
+      setCurrentUser(userData)
       setTokens(tokens)
     }
 
