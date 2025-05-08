@@ -1,5 +1,5 @@
 import { useApiFetcher } from '@/lib/api'
-import { getAllMatches } from './matchService'
+import { getAllMatches } from '@/lib/matches/matchService'
 import { useState } from 'react'
 import { convertMatchesToCSV } from '@/lib/utils/convertMatchesToCSV'
 import { exportCSV } from '@/lib/utils/exportCSV'
