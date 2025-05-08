@@ -14,6 +14,42 @@ export function isTokenValid(tokens: Auth['tokens'] | null): boolean {
   return expiresAt > now
 }
 
+export function isRefreshTokenValid(tokens: Auth['tokens'] | null): boolean {
+  if (!tokens) {
+    return false
+  }
+
+  const expiresAt = new Date(tokens.refreshExpiresAt)
+  const now = new Date()
+
+  return expiresAt > now
+}
+
+export const refreshTokens = async (fetcher: ApiFetcher, refreshToken: string) => {
+  const response = await fetcher('POST /v3/auth/refresh', {
+    data: {
+      refreshToken,
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error(response.data.message)
+  }
+
+  return mapTokensFromApi(response.data)
+}
+
+export const getRefreshTimeout = (tokens: Auth['tokens']) => {
+  if (!tokens) {
+    throw new Error('No tokens available')
+  }
+
+  const expiresAt = new Date(tokens.accessExpiresAt)
+  const now = new Date()
+
+  return expiresAt.getTime() - now.getTime()
+}
+
 export const getUser = async (fetcher: ApiFetcher, token: string) => {
   const response = await fetcher(
     'GET /v1/users/me',

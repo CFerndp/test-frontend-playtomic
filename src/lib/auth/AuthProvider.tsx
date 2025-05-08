@@ -1,6 +1,12 @@
-import { createContext, ReactNode, useEffect, useState } from 'react'
+import { createContext, ReactNode, useCallback, useEffect, useState } from 'react'
 import { Auth, AuthInitializeConfig } from './types'
-import { doAppLogin, getUserAndTokensFromInitialTokens } from './authService'
+import {
+  doAppLogin,
+  getRefreshTimeout,
+  getUserAndTokensFromInitialTokens,
+  isRefreshTokenValid,
+  refreshTokens,
+} from './authService'
 import { useApiFetcher } from '../api'
 
 interface AuthProviderProps extends AuthInitializeConfig {
@@ -51,6 +57,40 @@ function AuthProvider(props: AuthProviderProps): JSX.Element {
     return Promise.resolve()
   }
 
+  const refresh = useCallback(async () => {
+    if (!tokens) {
+      throw new Error('No tokens available')
+    }
+
+    if (!isRefreshTokenValid(tokens)) {
+      throw new Error('Refresh token expired')
+    }
+
+    const newTokens = await refreshTokens(fetcher, tokens.refresh)
+
+    // we set new tokens, callback will be called in the effect
+    setTokens(newTokens)
+
+    return Promise.resolve()
+  }, [fetcher, tokens])
+
+  useEffect(() => {
+    if (!tokens) {
+      return
+    }
+
+    const refreshTimeout = getRefreshTimeout(tokens)
+
+    const timeout = setTimeout(() => {
+      void refresh()
+    }, refreshTimeout)
+
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [tokens, refresh])
+
+  // This effect will be dispatched every time tokens changes, therefore, it will send the change via onAuthChange callback
   useEffect(() => {
     if (tokens === undefined) {
       return
@@ -69,7 +109,7 @@ function AuthProvider(props: AuthProviderProps): JSX.Element {
 
     void asyncTask()
 
-    // Hook check disabled in order to suscribe to onMount
+    // Hook check disabled in order to suscribe to first render
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
