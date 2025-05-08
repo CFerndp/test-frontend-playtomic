@@ -51,7 +51,7 @@ export const doAppLogin = async (fetcher: ApiFetcher, credentials: { email: stri
   return { tokens, userData }
 }
 
-export const getUserFromInitialTokens = async (
+export const getUserAndTokensFromInitialTokens = async (
   fetcher: ApiFetcher,
   initialTokens: AuthInitializeConfig['initialTokens'],
 ) => {

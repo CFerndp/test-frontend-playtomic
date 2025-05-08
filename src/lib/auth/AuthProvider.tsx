@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useEffect, useState } from 'react'
 import { Auth, AuthInitializeConfig } from './types'
-import { doAppLogin, getUserFromInitialTokens } from './authService'
+import { doAppLogin, getUserAndTokensFromInitialTokens } from './authService'
 import { useApiFetcher } from '../api'
 
 interface AuthProviderProps extends AuthInitializeConfig {
@@ -61,7 +61,7 @@ function AuthProvider(props: AuthProviderProps): JSX.Element {
 
   useEffect(() => {
     const asyncTask = async () => {
-      const { tokens, userData } = await getUserFromInitialTokens(fetcher, initialTokens)
+      const { tokens, userData } = await getUserAndTokensFromInitialTokens(fetcher, initialTokens)
 
       setCurrentUser(userData)
       setTokens(tokens)
