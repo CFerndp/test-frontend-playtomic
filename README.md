@@ -87,3 +87,6 @@ Trying to solve this task, I found different solutions that I tried.
 
 Using this approach, now I have to get all the matches, working with the pagination system of the API. Probably, for this point, there is a better way to do it using useSWRInfinite, but after a couple of tries,  I decided to not use it and implement a simple while loop to get all the matches. This solution is faster and for the purpose of this task, it is enough.
 
+### Notes about the 3rd task
+
+Due I did some modifications in the code of Matches view for the 2nd task, I had to create the PR manually. 
