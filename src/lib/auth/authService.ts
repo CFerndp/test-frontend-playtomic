@@ -47,7 +47,12 @@ export const getRefreshTimeout = (tokens: Auth['tokens']) => {
   const expiresAt = new Date(tokens.accessExpiresAt)
   const now = new Date()
 
-  return expiresAt.getTime() - now.getTime()
+  // Calculate the time difference in milliseconds
+  const timeDiff = expiresAt.getTime() - now.getTime()
+
+  // Tests has tokens with expiration date of years! if that's the case, we change the token refresh timeout to 24 hours
+  // Limit to maximum 24 hours (24 * 60 * 60 * 1000 = 86400000 milliseconds)
+  return Math.min(timeDiff, 86400000)
 }
 
 export const getUser = async (fetcher: ApiFetcher, token: string) => {

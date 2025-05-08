@@ -63,7 +63,7 @@ describe('authService', () => {
     })
 
     it('should validate refresh token independently of access token', () => {
-      // Token con refresh válido pero access expirado
+      // Token with valid refresh but expired access
       const mixedToken = {
         ...expiredTokens,
         refreshExpiresAt: futureDate.toISOString(),
@@ -214,6 +214,26 @@ describe('authService', () => {
     it('should return negative time for expired tokens', () => {
       const timeout = getRefreshTimeout(expiredTokens)
       expect(timeout).toBeLessThan(0)
+    })
+
+    it('should limit timeout to 24 hours for tokens with very far expiration dates', () => {
+      // Token with a far future expiration date (5 years ahead)
+      const farFutureDate = new Date()
+      farFutureDate.setFullYear(farFutureDate.getFullYear() + 5)
+
+      const tokenWithFarExpiration = {
+        ...validTokens,
+        accessExpiresAt: farFutureDate.toISOString(),
+      }
+
+      const timeout = getRefreshTimeout(tokenWithFarExpiration)
+
+      expect(timeout).toBe(86400000)
+
+      expect(timeout).toBeLessThanOrEqual(86400000)
+
+      const fiveYearsInMs = 5 * 365 * 24 * 60 * 60 * 1000
+      expect(farFutureDate.getTime() - new Date().getTime()).toBeGreaterThan(fiveYearsInMs * 0.9)
     })
   })
 })
