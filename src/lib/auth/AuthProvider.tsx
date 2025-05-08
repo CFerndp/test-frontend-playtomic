@@ -28,8 +28,8 @@ const AuthContext = createContext<Auth | null>(null)
 function AuthProvider(props: AuthProviderProps): JSX.Element {
   const { initialTokens, onAuthChange, children } = props
 
-  const [currentUser, setCurrentUser] = useState<Auth['currentUser'] | null>(null)
-  const [tokens, setTokens] = useState<Auth['tokens'] | null>(null)
+  const [currentUser, setCurrentUser] = useState<Auth['currentUser'] | null | undefined>(undefined)
+  const [tokens, setTokens] = useState<Auth['tokens'] | null | undefined>(undefined)
 
   const fetcher = useApiFetcher()
 
